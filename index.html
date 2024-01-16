@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webcam Image Prediction</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
     <script src="https://code.responsivevoice.org/responsivevoice.js?key=gDvWSxTf"></script>
@@ -65,8 +64,7 @@
     }
     setupRecognition();
 
-    // Nói lời chào khi bắt đầu chương trình
-    responsiveVoice.speak("Xin chào, tôi có thể giúp gì cho bạn", "Vietnamese Female");
+
 }
 
 
@@ -77,26 +75,48 @@
         }
 
         async function predict() {
-            const prediction = await model.predict(webcam.canvas);
-            let maxProbability = 0;
-            let maxClass = "";
-            for (let i = 0; i < maxPredictions; i++) {
-                if (prediction[i].probability > maxProbability) {
-                    maxProbability = prediction[i].probability;
-                    maxClass = prediction[i].className;
-                }
-            }
-            const classPrediction = maxClass + ": " + maxProbability.toFixed(2);
-            labelContainer.innerHTML = classPrediction;
-            if (maxClass !== currentClass) {
-                currentClass = maxClass;
-                const valueNameElement = document.getElementById("value-name");
-                valueNameElement.innerHTML = maxClass;
-                if (microphoneOn) {
-                    responsiveVoice.speak(maxClass, "Vietnamese Female");
-                }
-            }
+    const prediction = await model.predict(webcam.canvas);
+    let maxProbability = 0;
+    let maxClass = "";
+    for (let i = 0; i < maxPredictions; i++) {
+        if (prediction[i].probability > maxProbability) {
+            maxProbability = prediction[i].probability;
+            maxClass = prediction[i].className;
         }
+    }
+    const classPrediction = maxClass + ": " + maxProbability.toFixed(2);
+    labelContainer.innerHTML = classPrediction;
+
+    // Kiểm tra xem lớp dự đoán có khác với lớp hiện tại không
+    if (maxClass !== currentClass) {
+    currentClass = maxClass;
+    const valueNameElement = document.getElementById("value-name");
+    valueNameElement.innerHTML = maxClass;
+
+    // Xác định nội dung để đọc dựa trên giá trị nhận diện
+    let speechContent = "";
+    switch (maxClass) {
+        case "ba":
+            speechContent = "Con chào ba";
+            break;
+        case "mẹ":
+            speechContent = "Con chào mẹ";
+            break;
+        case "con":
+            speechContent = "Chào bạn nhé";
+            break;
+        default:
+            // Nếu không khớp với các giá trị trên, có thể thêm xử lý khác hoặc để trống
+            speechContent = "Dự đoán là: " + maxClass;
+            break;
+    }
+
+    // Đọc nội dung phù hợp
+    responsiveVoice.speak(speechContent, "Vietnamese Female");
+}
+
+}
+
 
         function handleSpeechResult(event) {
     if (!microphoneOn) {
