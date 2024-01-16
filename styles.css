@@ -1,0 +1,169 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-image: url('/access/backgound.png');
+    background-size: cover; /* Cover the entire viewport */
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Fixed background so it doesn't scroll with content */
+}
+
+
+h1 {
+    color: navy;
+    font-size: 2em; /* Slightly larger font size for headings */
+}
+
+p {
+    color: green;
+    line-height: 1.5; /* Improves readability of paragraphs */
+}
+
+.title {
+    color: rgb(217, 222, 219);
+    font-size: 45px;
+    text-align: center; /* Aligns text to the center */
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px; /* Adds 30px of space above the title */
+    width: 50%; /* Adjust the width as needed */
+    font-weight: bold; /* Makes the title bold */
+    border-bottom: 2px solid red; /* Adds a red underline for emphasis */
+    padding-bottom: 10px; /* Spacing between text and underline */
+    position: absolute; /* Positions the element absolutely relative to its positioned ancestor */
+    top: 0; /* Aligns the top edge of the element with the top of the page */
+    left: 50%; /* Positions the element halfway across the page */
+    transform: translateX(-50%); /* Shifts the element to the left by half its width */
+}
+.button_mic {
+    background-image: url('access/.png'); /* Thay thế 'your-image-name.png' với tên file ảnh của bạn */
+    background-size: cover; /* Điều chỉnh để phù hợp với kích thước của nút */
+    text-indent: -9999px; /* Ẩn văn bản bên trong nút */
+    border: none; /* Xóa đường viền nút */
+    width: 100px; /* Điều chỉnh để phù hợp với kích thước của ảnh */
+    height: 100px; /* Đi
+    border: 2px solid #000; /* Adds a solid border */
+    border-radius: 50%; /* Makes the button circular */
+    background-color: #ff0000; /* Red button background */
+    color: #fff; /* White text on the button */
+    text-align: center; /* Centers the text inside the button */
+    line-height: 100px; /* Vertically centers the text inside the button */
+    cursor: pointer; /* Changes cursor to a hand symbol when hovering over the button */
+    transition: background-color 0.3s ease; /* Smooth transition for button hover effect */
+    position: absolute; /* Absolute positioning */
+    top: calc(50% - 25px); /* Adjusts vertical position */
+    left: 50%; /* Centers horizontally */
+    transform: translate(-50%, -50%); /* Aligns center of the button with the specified position */
+}
+
+
+.button_mic:hover {
+    background-color: #cc0000; /* Darker shade of red on hover */
+}
+
+.start-button {
+    background: #1AAB8A;
+    color: #fff;
+    border: none;
+    position: absolute;
+    height: 60px;
+    font-size: 1.6em;
+    padding: 0 2em;
+    cursor: pointer;
+    text-align: center;
+    margin-bottom: 30px; /* Thêm khoảng cách dưới mỗi nút */
+    transition: 800ms ease all;
+    outline: none;
+    bottom: 250px; /* 300px from the bottom */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust horizontal centering */
+}
+
+
+
+.start-button:hover {
+    background: #fff;
+    color: #1AAB8A;
+}
+
+.start-button:before, .start-button:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 2px;
+    width: 0;
+    background: #1AAB8A;
+    transition: 400ms ease all;
+}
+
+.start-button:after {
+    right: inherit;
+    top: inherit;
+    left: 0;
+    bottom: 0;
+}
+
+.start-button:hover:before, .start-button:hover:after {
+    width: 100%;
+    transition: 800ms ease all;
+}
+#linkButton {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    padding: 15px 32px; /* Top and bottom padding of 15px, left and right padding of 32px */
+    text-align: center; /* Center the text inside the button */
+    text-decoration: none; /* No underline on the text */
+    display: none; /* Hide the button */
+    font-size: 16px; /* Sets the font size */
+    margin: 4px 2px; /* Top and bottom margin of 4px, left and right margin of 2px */
+    cursor: pointer; /* Changes the cursor to a pointer when hovering over the button */
+    border: none; /* No border */
+    border-radius: 8px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition for the background color */
+}
+
+#linkButton:hover {
+    background-color: #45a049; /* Darker shade of green on hover */
+}
+
+.rectangle {
+    width: 80%; /* Adjust the width as needed */
+    height: 200px; /* Adjust the height as needed */
+    background-color: #333; /* Set the background color */
+    margin: -250px auto 20px; /* 50px top margin, auto horizontal centering, 20px bottom margin */
+    border-radius: 30px; /* Rounded corners */
+}
+#transcriptDisplay {
+    color: white;
+    font-size: 30px;
+    margin-top: 80px;
+    text-align: center;
+    max-width: 100%; /* Ensures the content doesn't overflow the rectangle */
+    overflow-wrap: break-word; /* Ensures long text wraps within the container */
+}
+#centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Align items to the bottom */
+    position: relative; /* Make sure the parent is a positioned element */
+}
+
+#webcam-container {
+    top: 500px;
+    position: absolute; /* Position the webcam container */
+    z-index: 1; /* Set a higher z-index to place it on top */
+    /* Add your webcam container styles here */
+}
+
+
+  
+
+

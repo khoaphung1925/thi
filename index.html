@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Image Prediction</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=gDvWSxTf"></script>
+</head>
+<body>
+  <div class="title">Trợ lý ảo nhà thông minh</div>
+
+  <button type="button" class="start-button" onclick="init()">Start</button>
+
+  <div id="webcam-container"></div>
+  <div id="label-container"></div>
+  <div id="value-name"></div>
+  
+  <button type="button" id="stop-button" class="button_mic" onclick="stopEverything()">Stop</button>
+  <button type="button" id="microphone-button" class="button_mic" onclick="toggleMicrophone()"></button>
+
+
+
+
+
+    <script type="text/javascript">
+        const URL = "./my_model/";
+        let model, webcam, labelContainer, maxPredictions;
+        let currentClass = "";
+        let microphoneActive = false;
+        let recognition;
+        let microphoneOn = false; 
+        let lastTranscript = "";
+
+        function setupRecognition() {
+            window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (window.SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.onresult = handleSpeechResult;
+            } else {
+                console.error('Speech recognition is not supported in your browser.');
+                document.getElementById("microphone-button").style.display = "none";
+            }
+        }
+
+        async function init() {
+    const modelURL = URL + "model.json";
+    const metadataURL = URL + "metadata.json";
+    model = await tmImage.load(modelURL, metadataURL);
+    maxPredictions = model.getTotalClasses();
+    const flip = true;
+    webcam = new tmImage.Webcam(200, 200, flip);
+    await webcam.setup();
+    await webcam.play();
+    window.requestAnimationFrame(loop);
+    document.getElementById("webcam-container").appendChild(webcam.canvas);
+    labelContainer = document.getElementById("label-container");
+    for (let i = 0; i < maxPredictions; i++) {
+        labelContainer.appendChild(document.createElement("div"));
+    }
+    setupRecognition();
+
+    // Nói lời chào khi bắt đầu chương trình
+    responsiveVoice.speak("Xin chào, tôi có thể giúp gì cho bạn", "Vietnamese Female");
+}
+
+
+        async function loop() {
+            webcam.update();
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        async function predict() {
+            const prediction = await model.predict(webcam.canvas);
+            let maxProbability = 0;
+            let maxClass = "";
+            for (let i = 0; i < maxPredictions; i++) {
+                if (prediction[i].probability > maxProbability) {
+                    maxProbability = prediction[i].probability;
+                    maxClass = prediction[i].className;
+                }
+            }
+            const classPrediction = maxClass + ": " + maxProbability.toFixed(2);
+            labelContainer.innerHTML = classPrediction;
+            if (maxClass !== currentClass) {
+                currentClass = maxClass;
+                const valueNameElement = document.getElementById("value-name");
+                valueNameElement.innerHTML = maxClass;
+                if (microphoneOn) {
+                    responsiveVoice.speak(maxClass, "Vietnamese Female");
+                }
+            }
+        }
+
+        function handleSpeechResult(event) {
+    if (!microphoneOn) {
+        return;
+    }
+    const results = event.results;
+    let transcript = "";
+    for (let i = event.resultIndex; i < results.length; i++) {
+        transcript += results[i][0].transcript.toLowerCase();
+    }
+    lastTranscript = transcript;
+
+    // In ra nội dung đã nghe
+    console.log("Nghe được: " + transcript);
+}
+
+        function toggleMicrophone() {
+            if (recognition) {
+                if (!microphoneActive) {
+                    recognition.start();
+                    microphoneActive = true;
+                    microphoneOn = true;
+                    document.getElementById("microphone-button").textContent = "Microphone: On";
+                } else {
+                    recognition.stop();
+                    microphoneActive = false;
+                    microphoneOn = false;
+                    document.getElementById("microphone-button").textContent = "Microphone: Off";
+                    processTranscript();
+                }
+            }
+        }
+
+
+        function processTranscript() {
+    console.log("Đang xử lý: " + lastTranscript);
+
+    let words = lastTranscript.split(" ");
+    let hasBa = words.includes("ba");
+    let hasMe = words.includes("mẹ");
+    let hasCon = words.includes("con");
+    let haslop = words.includes("lớp");
+    let hassmart = words.includes("thông");
+    let hasthanks = words.includes("ơn")
+    let hashi= words.includes("xin")
+    let hasweather= words.includes("tiết")
+    if (words.includes("tuổi")) {
+        if (hasBa) {
+            console.log("Phản hồi: Ba năm nay 40 tuổi");
+            responsiveVoice.speak("Ba năm nay 40 tuổi", "Vietnamese Female");
+        } else if (hasMe) {
+            console.log("Phản hồi: Mẹ năm nay 60 tuổi");
+            responsiveVoice.speak("Mẹ năm nay 60 tuổi", "Vietnamese Female");
+        } else if (hasCon) {
+            console.log("Phản hồi: Con 7 tuổi");
+            responsiveVoice.speak("Con 7 tuổi", "Vietnamese Female");
+        }
+    } else if (words.includes("nghề")) {
+        if (hasBa) {
+            console.log("Phản hồi: Ba làm thợ điện");
+            responsiveVoice.speak("Ba làm thợ điện", "Vietnamese Female");
+        } else if (hasMe) {
+            console.log("Phản hồi: Mẹ làm bác sĩ");
+            responsiveVoice.speak("Mẹ làm bác sĩ", "Vietnamese Female");
+        } 
+
+
+    } else if (words.includes("lớp")) {
+
+        if (haslop) {
+            console.log("Phản hồi: Con học lớp 5");
+            responsiveVoice.speak("Con học lớp 5", "Vietnamese Female");
+        }
+
+
+      } else if (words.includes("cảm")) {
+        if (hasthanks) {
+            console.log("Phản hồi:cảm ơn");
+            responsiveVoice.speak("Dạ không có gì, rất hân hạnh được phục vụ bạn", "Vietnamese Female");}
+    }
+    else if (words.includes("chào")) {
+        if (hashi) {
+            console.log("Phản hồi: xin chào bạn, tôi có thể giúp gì cho bạn");
+            responsiveVoice.speak("xin chào bạn, tôi có thể giúp gì cho bạn", "Vietnamese Female");}
+    }
+
+    
+    else if (words.includes("nhà")) {
+        if (hassmart) {
+            console.log("Phản hồi: ");
+            responsiveVoice.speak("Ngôi nhà sử dụng: Cảm biến lửa: khi phát hiện có cháy, còi hú kêu thông báo cho mọi người và tự động xịt nước dập tắt đám cháy. Cảm biến khí gas: khi phát hiện có khí gas rò rỉ, còi hú kêu thông báo cho mọi người và động cơ quạt hoạt động làm khí gas bay ra ngoài.Cảm biến hồng ngoại: khi cảm biến được thân nhiệt của con người, đèn tự động bật sáng.Hệ thống chống trộm: chủ nhà có thể quan sát mọi người qua camera, khi phát hiện có người cậy cửa, hệ thống thông báo đến điện thoại của mình và phát ra tiếng hú để cảnh báo cho hàng xóm. Hệ thống chống lũ: khi có lũ, mực nước dâng lên tới độ cao và có độ ẩm nhất định, phao được lắp dưới đáy ngôi nhà tự động bơm lên để nhà nổi được trên mặt nước, không bị ngập lụt", "Vietnamese Female");}
+    }
+ 
+
+
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const timeString = `Bây giờ là ${hours} giờ ${minutes} phút`;
+    
+
+    let askTime = words.includes("mấy giờ");
+
+    if (askTime) {
+      responsiveVoice.speak(timeString, "Vietnamese Female");
+    }
+
+    if (hasweather) {
+        console.log("Phản hồi: Chuyển đến trang thông tin thời tiết");
+        responsiveVoice.speak("để tôi cập nhật thông tin thời tiết cho bạn nhé", "Vietnamese Female");
+
+        // Chuyển hướng đến file index.html
+        window.open('./Weather App in JavaScript/index.html', '_blank');
+    }
+    
+}
+
+
+
+function stopEverything() {
+    // Dừng webcam
+    if (webcam) {
+        webcam.stop();
+    }
+
+    // Dừng nhận dạng giọng nói
+    if (recognition && microphoneActive) {
+        recognition.stop();
+        microphoneActive = false;
+        microphoneOn = false;
+        document.getElementById("microphone-button").textContent = "Microphone: Off";
+    }
+
+}
+
+
+    </script>
+</body>
+</html>
